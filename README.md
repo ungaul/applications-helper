@@ -14,19 +14,20 @@
 - I advise you to set `AI_ENDPOINT` to a local LLM url (such as Ollama), because you probably don't want to send all your details to OpenAI.
 - Ollama cloud requires a FREE API key but only fetches specified pages without storing extra data.
 
-## Installation (only Linux supported for now)
+## Installation
 1. Install [LibreOffice](https://www.libreoffice.org/get-help/install-howto/) and [Python](https://www.python.org/downloads/).
 2. Clone this repository
    ```bash
    git clone https://github.com/ungaul/applications-helper && cd applications-helper
    ```
 3. Create/activate Python virtual environment, and install requirements
+   On Windows, no need to activate a virtual environment, just install requirements.
    ```bash
    python -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
    ```
-4. Configure `.env`
+5. Configure `.env`
    ```bash
    OLLAMA_API_KEY=PASTEYOURKEYHERE
    OPENAI_API_KEY=PASTEYOURKEYHERE
