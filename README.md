@@ -1,7 +1,6 @@
 # Applications Helper
 
 > This project if a WIP, please wait for these major fixes to be done:
-- Add support for Windows.
 - Improve logging and error handling.
 - AIO app/webUI?
 
