@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 import csv
+import platform
 from pathlib import Path
 from datetime import datetime
 from docx import Document
@@ -12,7 +13,7 @@ load_dotenv()
   
 GPT_MODEL = os.getenv("GPT_MODEL", "gpt-4.1-mini")  
 AI_ENDPOINT = os.getenv("AI_ENDPOINT", "https://api.openai.com/v1")  
-TEMPLATE_CV = Path(os.getenv("TEMPLATE_CV", "Template/CV.pdf"))  
+TEMPLATE_CV = Path(os.getenv("TEMPLATE_CV", "Template/CV.docx"))  
 TEMPLATE_COVER_LETTER = Path(os.getenv("TEMPLATE_COVER_LETTER_EXAMPLE", "Template/Cover Letter.docx"))  
 OUTPUT_BASE_DIR = Path(os.getenv("OUTPUT_BASE_DIR", "."))  
 COVER_LETTER_PROMPT_BASE = os.getenv("COVER_LETTER_PROMPT", "Generate a cover letter based on the example.")  
@@ -241,12 +242,44 @@ def modify_cover_letter(template_path: Path, output_path: Path, new_paragraphs: 
                 para.text = new_paragraphs[i]  
       
     doc.save(output_path)  
-  
-def convert_to_pdf_linux(docx_path: Path, pdf_path: Path):  
-    try:  
-        subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', str(pdf_path.parent), str(docx_path)], check=True, capture_output=True)  
-    except subprocess.CalledProcessError as e:  
-        print(f"Warning: PDF conversion error: {e}")  
+
+def get_libreoffice_command():
+    system = platform.system()
+    
+    if system == "Linux":
+        return 'libreoffice'
+    elif system == "Windows":
+        possible_paths = [
+            r'C:\Program Files\LibreOffice\program\soffice.exe',
+            r'C:\Program Files (x86)\LibreOffice\program\soffice.exe',
+        ]
+        for path in possible_paths:
+            if Path(path).exists():
+                return path
+        return 'soffice'
+    elif system == "Darwin":
+        return '/Applications/LibreOffice.app/Contents/MacOS/soffice'
+    else:
+        return 'libreoffice'
+
+def convert_to_pdf(docx_path: Path, pdf_path: Path):
+    libreoffice_cmd = get_libreoffice_command()
+    try:
+        subprocess.run([
+            libreoffice_cmd,
+            '--headless',
+            '--convert-to', 'pdf',
+            '--outdir', str(pdf_path.parent),
+            str(docx_path)
+        ], check=True, capture_output=True, timeout=30)
+    except subprocess.CalledProcessError as e:
+        print(f"Warning: PDF conversion error: {e}")
+        if e.stderr:
+            print(f"Error details: {e.stderr.decode()}")
+    except FileNotFoundError:
+        print(f"Warning: LibreOffice not found. Install from https://www.libreoffice.org/")
+    except subprocess.TimeoutExpired:
+        print(f"Warning: PDF conversion timed out for {docx_path.name}") 
   
 def get_unique_filename(base_path: Path) -> Path:  
     if not base_path.exists():  
@@ -368,14 +401,14 @@ def process_job_posting(job_posting: str, url: str = None) -> dict:
     modify_cover_letter(TEMPLATE_COVER_LETTER, output_cl_docx, new_paragraphs)  
       
     output_cl_pdf = output_cl_docx.with_suffix('.pdf')  
-    convert_to_pdf_linux(output_cl_docx, output_cl_pdf)  
+    convert_to_pdf(output_cl_docx, output_cl_pdf)  
       
     if TEMPLATE_CV.exists():  
         output_cv_docx = get_unique_filename(company_dir / f"{candidate_name} CV.docx")  
         modify_cv_header(TEMPLATE_CV, output_cv_docx, cv_updates)  
           
         output_cv_pdf = output_cv_docx.with_suffix('.pdf')  
-        convert_to_pdf_linux(output_cv_docx, output_cv_pdf)  
+        convert_to_pdf(output_cv_docx, output_cv_pdf)  
           
         print("Generating email...")  
         email_body = generate_email_body(company_name, position_title, language, TEMPLATE_COVER_LETTER)  

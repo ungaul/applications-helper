@@ -23,8 +23,8 @@
    ```
 3. Create/activate Python virtual environment, and install requirements
    ```bash
-   python -m venv env
-   source env/bin/activate
+   python -m venv venv
+   source venv/bin/activate
    pip install -r requirements.txt
    ```
 4. Configure `.env`
