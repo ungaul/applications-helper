@@ -1,6 +1,9 @@
 services:
   app:
     image: ghcr.io/ungaul/applications-helper:latest
+    container_name: applications-helper
+    stdin_open: true
+    tty: true
     environment:
       - OLLAMA_API_KEY=
       - OPENAI_API_KEY=
