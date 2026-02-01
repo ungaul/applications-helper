@@ -1,4 +1,3 @@
-python-docx
 openai
-python-dotenv
+python-docx
 ollama

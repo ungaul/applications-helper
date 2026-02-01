@@ -1,0 +1,17 @@
+services:
+  app:
+    image: ghcr.io/ungaul/applications-helper:latest
+    environment:
+      - OLLAMA_API_KEY=
+      - OPENAI_API_KEY=
+      - AI_ENDPOINT=https://api.openai.com/v1
+      - GPT_MODEL=gpt-4.1-mini
+      - TEMPLATE_CV=/app/template_cv.docx
+      - TEMPLATE_COVER_LETTER=/app/template_cover_letter.docx
+      - OUTPUT_BASE_DIR=/app/output
+      - TRACKER_FILE=/app/data/list.csv
+    volumes:
+      - ./Template/CV.docx:/app/template_cv.docx:ro
+      - ./Template/Cover_Letter.docx:/app/template_cover_letter.docx:ro
+      - .:/app/output
+      - ./data:/app/data

@@ -1,3 +1,4 @@
-.env
 venv
 Template
+__pycache__
+docker-compose.yml
