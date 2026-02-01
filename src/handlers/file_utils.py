@@ -16,10 +16,14 @@ def get_unique_filename(base_path: Path) -> Path:
 
 
 def fetch_job_posting_from_url(url: str) -> str:
-    client = ollama.Client()
-    client._client.headers['Authorization'] = f'Bearer {os.getenv("OLLAMA_API_KEY")}'
-    result = client.web_fetch(url=url)
-    return result.content
+    try:
+        client = ollama.Client()
+        client._client.headers['Authorization'] = f'Bearer {os.getenv("OLLAMA_API_KEY")}'
+        result = client.web_fetch(url=url)
+        return result.content
+    except Exception as e:
+        print(f"Failed to fetch: {e}")
+        return None
 
 
 def convert_to_pdf(docx_path: Path, pdf_path: Path):

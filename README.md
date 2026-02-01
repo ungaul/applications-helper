@@ -25,7 +25,7 @@
 ## Usage
 Open a terminal from the folder containing your file, and
 ```bash
-docker compose up
+docker compose run --rm app
 ```
 The program will prompt you if you want it to add job postings in the tracker.
 

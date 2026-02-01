@@ -1,4 +1,6 @@
 venv
-Template
-__pycache__
 docker-compose.yml
+/*/
+!/src/
+!/src/**
+__pycache__
