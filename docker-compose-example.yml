@@ -1,6 +1,9 @@
 services:
   app:
     image: ghcr.io/ungaul/applications-helper:latest
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     container_name: applications-helper
     stdin_open: true
     tty: true
@@ -16,6 +19,7 @@ services:
       - ADZUNA_APP_ID=
       - ADZUNA_APP_KEY=
       - JOB_SEARCHES=5
+      - CV_HEADER_TEMPLATE=
     volumes:
       - ./Template/CV.docx:/app/template_cv.docx:ro
       - ./Template/Cover_Letter.docx:/app/template_cover_letter.docx:ro

@@ -63,18 +63,61 @@ Return ONLY valid JSON."""
         print(f"Warning: Invalid JSON from GPT: {content}")
         return {"job_field": "Finance", "start_date": "February"}
 
+
+def get_cv_replacements(header_text: str, updates: dict) -> dict:
+    job_field = updates.get('job_field', '')
+    start_date = updates.get('start_date', '')
+    
+    prompt = f"""Analyze this CV header text and identify EXACTLY which words need to be replaced.
+
+CV HEADER TEXT:
+{header_text}
+
+REPLACEMENTS NEEDED:
+- Find the business domain/field word (like "Finance", "Marketing", "Audit", "Controlling", etc.) and replace with: "{job_field}"
+- Find the start month (like "Février", "March", "Januar", etc.) and replace with: "{start_date}"
+
+Return a JSON object where keys are the EXACT original words found in the text, and values are what to replace them with.
+Only include words that actually exist in the text and need replacing.
+Example: {{"Finance": "Controlling", "Février": "Mars"}}
+
+Return ONLY valid JSON, no explanations."""
+
+    content = _chat("Return only valid JSON.", prompt)
+    content = content.replace('```json', '').replace('```', '').strip()
+
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        print(f"Warning: Invalid JSON for replacements: {content}")
+        return {}
+
+
 def get_new_cover_letter_paragraphs(job_posting: str, company_name: str, template_path, language: str) -> list:
     doc = Document(template_path)
     original_paragraphs = [p.text for p in doc.paragraphs]
     todays_date = datetime.now().strftime("%Y-%m-%d")
 
-    prompt = f"""Return a JSON array of paragraph texts (strings) for a cover letter, matching the exact structure and number of paragraphs from the example. CRITICAL: Copy the ENTIRE example EXACTLY except for these specific changes: 1) Company address block (company name, department, city - do NOT invent street addresses or building names), 2) Date, 3) Job title in object line and intro paragraph, 4) Paragraph 3 content. EVERYTHING ELSE must be IDENTICAL to the example - same personal info (name, address, phone, email), same experiences, same wording, same closing. DO NOT modify, add, or invent ANY information that is not in the original example. For paragraph 3: Start exactly like the example opening phrase, then list 2-3 technical skills from the EXAMPLE TEMPLATE that are also relevant to this job (do NOT invent new skills - only use skills already mentioned in the example). Then add ONE or TWO short, personal sentences in first person about what YOU genuinely like about this type of work - be specific and authentic. Talk about what interests you personally in the work itself, what you enjoy doing, what problems you like solving - NOT about "contributing", "supporting", "optimizing processes", or other abstract corporate goals. Keep it grounded, direct, and conversational. Max 3-4 sentences total for paragraph 3. Match the example's natural, personal tone exactly - avoid pompous or overly formal corporate language. Keep it authentic and down-to-earth.
+    prompt = f"""Return a JSON array of paragraph texts (strings) for a cover letter, matching the exact structure and number of paragraphs from the example. 
 
-IMPORTANT: 
-- The cover letter MUST be written in the SAME LANGUAGE as the job posting (ISO code: {language}).
-- After the subject line, there MUST be an empty paragraph (empty string "") before the salutation
-- The signature at the end should appear ONLY ONCE (just the name, no duplication)
-- Preserve the exact number of paragraphs as the original template
+CRITICAL RULES:
+1) Copy the ENTIRE example EXACTLY except for these specific changes:
+   - Company address block (company name, department, city - do NOT invent street addresses)
+   - Date
+   - Job title in subject line and intro paragraph
+   - Paragraph 3 content (see below)
+
+2) EVERYTHING ELSE must be IDENTICAL to the example - same personal info, same experiences, same wording, same closing.
+
+3) For paragraph 3: Start exactly like the example opening phrase, then list 2-3 technical skills FROM THE EXAMPLE that are relevant to this job. Then add 1-2 short personal sentences about what you genuinely like about this type of work.
+
+4) LANGUAGE QUALITY: Write in fluent, native-level {language}. 
+   - Avoid anglicisms and literal translations
+   - Use natural expressions native speakers would use
+   - If {language}=fr: avoid "patterns", "process", use "tendances/schémas", "méthodes/procédures" instead
+
+5) After the subject line, there MUST be an empty paragraph (empty string "") before the salutation
+6) The signature at the end should appear ONLY ONCE
 
 JOB POSTING: {job_posting}
 COMPANY: {company_name}
@@ -123,20 +166,3 @@ End with just the closing phrase. Return ONLY the email body text."""
         signature += f"\n{phone_number}"
 
     return email_body + signature
-
-def find_and_replace_fields(text: str, updates: dict) -> str:
-    if not text.strip():
-        return text
-    
-    prompt = f"""Text: "{text}"
-
-TASK: If this text contains a business domain word (Finance, Marketing, Audit, Risk, Controlling, Commerce, Management, Data, etc.), REPLACE that word with "{updates.get('job_field', '')}".
-If this text contains a month name (in any language), REPLACE that month with "{updates.get('start_date', '')}".
-
-CRITICAL RULES:
-- REPLACE means substitute, NOT append or concatenate
-- Keep all other text exactly the same
-- If no replacement needed, return the original text unchanged
-- Return ONLY the final text, no explanations"""
-
-    return _chat("Return only the modified text, nothing else.", prompt)
