@@ -42,3 +42,8 @@ def update_csv_entry(url: str, updates: dict):
             entry.update(updates)
             break
     write_csv_entries(entries)
+
+def add_csv_entry(url: str):
+    entries = read_csv_entries()
+    entries.append({'url': url})
+    write_csv_entries(entries)

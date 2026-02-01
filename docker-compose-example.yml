@@ -9,9 +9,12 @@ services:
       - TEMPLATE_CV=/app/template_cv.docx
       - TEMPLATE_COVER_LETTER=/app/template_cover_letter.docx
       - OUTPUT_BASE_DIR=/app/output
-      - TRACKER_FILE=/app/data/list.csv
+      - TRACKER_FILE=/app/list.csv
+      - ADZUNA_APP_ID=
+      - ADZUNA_APP_KEY=
+      - JOB_SEARCHES=5
     volumes:
       - ./Template/CV.docx:/app/template_cv.docx:ro
       - ./Template/Cover_Letter.docx:/app/template_cover_letter.docx:ro
       - .:/app/output
-      - ./data:/app/data
+      - ./list.csv:/app/list.csv
