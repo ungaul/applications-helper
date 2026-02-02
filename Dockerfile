@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-liberation \
     fonts-dejavu \
     fonts-freefont-ttf \
-    fonts-noto \
+    fonts-noto \    
+    ttf-mscorefonts-installer \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
