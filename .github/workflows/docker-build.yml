@@ -97,3 +97,13 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        
+      - name: Clean old versions
+        if: github.event_name != 'pull_request'
+        run: |
+          gh api /users/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}/versions \
+            --paginate | jq -r '.[] | select((.metadata.container.tags | length == 0) or (.metadata.container.tags[0] | contains(".sig"))) | .id' | \
+            head -n -1 | \
+            xargs -I {} gh api --method DELETE /users/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}/versions/{}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
