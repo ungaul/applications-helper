@@ -4,3 +4,5 @@ docker-compose.yml
 !/src/
 !/src/**
 __pycache__
+*.pdf
+*.docx
