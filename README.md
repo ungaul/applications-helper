@@ -29,6 +29,8 @@ docker compose run --rm app
 ```
 The program will prompt you if you want it to add job postings in the tracker.
 
+> Please avoid using a VPN while using the app as scrapers may be blocked while fetching job postings.
+
 ## Contribution
 
 Feel free to contribute!

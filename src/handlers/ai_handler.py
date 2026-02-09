@@ -21,7 +21,15 @@ def _chat(system: str, user: str, temperature: float = 0) -> str:
     return response.choices[0].message.content.strip()
 
 def get_company_name(job_posting: str) -> str:
-    return _chat("Extract only the company name. Respond with the name only, nothing else.", job_posting)
+    return _chat(
+        """Extract only the hiring company name. Respond with the name only, nothing else.
+RULES:
+- Return the company that is HIRING, not the job board or recruitment platform (e.g. ignore Indeed, LinkedIn, Welcome to the Jungle, Hellowork, etc.).
+- The name must be a plausible company name: no numbers alone, no URLs, no gibberish.
+- If you cannot confidently identify the company name, respond with exactly "Unknown".
+- Double-check your answer: is this really the employer, not the platform hosting the ad?""",
+        job_posting
+    )
 
 def get_position_title(job_posting: str) -> str:
     return _chat("Extract only the job position/title. Respond with the title only, nothing else.", job_posting)
@@ -41,8 +49,11 @@ def detect_language(job_posting: str) -> str:
 def get_cover_letter_label(language: str) -> str:
     return _chat(f"Return only the translation of 'Cover Letter' in the language with ISO code '{language}'. Return ONLY the translation, nothing else.", "Cover Letter")
 
-def get_email_subject(language: str) -> str:
-    return _chat(f"Return only the translation of 'Application' (job application) in the language with ISO code '{language}'. Return ONLY the translation, nothing else.", "Application")
+def get_email_subject(position_title: str, job_field: str, candidate_name: str, language: str) -> str:
+    return _chat(
+        "Return ONLY a short professional email subject line for a job application. No quotes, no explanation.",
+        f"Compose an email subject in language '{language}' for: position='{position_title}', field='{job_field}', candidate='{candidate_name}'. Format like: Candidature - [Position] - [Field] - [Name] (adapt 'Candidature' to the language).",
+    )
 
 def get_cv_updates(job_posting: str, language: str) -> dict:
     todays_date = datetime.now().strftime("%Y-%m-%d")
@@ -154,10 +165,15 @@ COMPANY: {company_name}
 POSITION: {position_title}
 LANGUAGE: ISO code {language}
 
-The email should be short (3-4 sentences), natural, mention the position and attachments.
-End with just the closing phrase. Return ONLY the email body text."""
+RULES:
+- Two short paragraphs: first to introduce yourself and mention the position, second to mention attachments and availability.
+- Use the CORRECT gender for the candidate name "{candidate_name}" (masculine/feminine forms, no gender-neutral parentheses like "motivé(e)").
+- Sound natural and human, not corporate or robotic. Write like a real person would.
+- No filler sentences, no meaningless corporate fluff.
+- End with just the closing phrase (e.g. "Cordialement,"), NO name after it.
+Return ONLY the email body text."""
 
-    email_body = _chat("Generate a natural, personalized email body. Return only the email text.", prompt, temperature=0.5)
+    email_body = _chat("Generate a natural, human-sounding email body. Return only the email text.", prompt, temperature=0.5)
     signature = f"\n\n{candidate_name}"
     if phone_number:
         signature += f"\n{phone_number}"

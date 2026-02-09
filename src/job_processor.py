@@ -58,7 +58,7 @@ def process_job_posting(job_posting: str, url: str = None) -> dict:
 
         print("Generating email...")
         email_body = generate_email_body(company_name, position_title, language, template_cl)
-        email_subject = get_email_subject(language)
+        email_subject = get_email_subject(position_title, cv_updates.get("job_field", ""), candidate_name, language)
         output_eml = get_unique_filename(company_dir / f"{candidate_name} Email.eml")
         create_eml_file(output_eml, email_body, output_cv_pdf, output_cl_pdf, email_subject)
 
