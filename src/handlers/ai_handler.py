@@ -106,16 +106,13 @@ CRITICAL RULES:
    - Date
    - Job title in subject line and intro paragraph
    - Paragraph 3 content (see below)
-
+   - Do NOT change the personal info (name, address, email, phone) present in the original template.
 2) EVERYTHING ELSE must be IDENTICAL to the example - same personal info, same experiences, same wording, same closing.
-
-3) For paragraph 3: Start exactly like the example opening phrase, then list 2-3 technical skills FROM THE EXAMPLE that are relevant to this job. Then add 1-2 short personal sentences about what you genuinely like about this type of work.
-
+3) The applicant's full name MUST appear once at the end of the letter, as in the original.
 4) LANGUAGE QUALITY: Write in fluent, native-level {language}. 
-   - Avoid anglicisms and literal translations
-   - Use natural expressions native speakers would use
-   - If {language}=fr: avoid "patterns", "process", use "tendances/schémas", "méthodes/procédures" instead
-
+   - Avoid anglicisms and literal translations.
+   - Use natural expressions native speakers would use.
+   - Avoid "patterns", "process", corporate and meaningless sentences.
 5) After the subject line, there MUST be an empty paragraph (empty string "") before the salutation
 6) The signature at the end should appear ONLY ONCE
 

@@ -23,5 +23,5 @@ services:
     volumes:
       - ./Template/CV.docx:/app/template_cv.docx:ro
       - ./Template/Cover_Letter.docx:/app/template_cover_letter.docx:ro
-      - .:/app/output
+      - ./output:/app/output
       - ./list.csv:/app/list.csv

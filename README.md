@@ -18,7 +18,7 @@
 
 1. Install [Docker](https://docs.docker.com/get-docker/)
 2. Make a template folder containing your CV and your Cover Letter in .docx format
-3. Download [docker-compose-example.yml](docker-compose-example.yml), add your CV heading text in `CV_HEADER_TEMPLATE` and add your `OLLAMA_API_KEY` and `OPENAI_API_KEY` (Adzuna credentials are optional)
+3. Download [docker-compose-example.yml](docker-compose-example.yml), add your CV heading text in `CV_HEADER_TEMPLATE` and add your `OLLAMA_API_KEY` and `OPENAI_API_KEY` (Adzuna credentials are optional). Fill `CV_HEADER_TEMPLATE` as written in your template for the script to find it and make it match with each offer.
 4. Adjust the file bindings to match your template & output folder (which will contain a subfolder for each company)
 5. Create the tracker file (`list.csv` in the same folder, or wherever you bind it) before starting the container
 
